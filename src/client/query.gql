@@ -1,0 +1,21 @@
+query GetNewsList($params: GetNewsListParams!) {
+  partnersProgram {
+    news {
+      getNewsList(params: $params) {
+        statusID
+        news {
+          id
+          title
+          image
+          PImage
+          shortText
+          mainText
+          url
+          isVisible
+          date
+          datePublick
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "include": ["./src/*"],
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "esnext",
+    "downlevelIteration": true,
+    "strict": true,
+    "strictFunctionTypes": false,
+    "types": ["node"],
+    "sourceMap": true,
+    "allowJs": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noUnusedLocals": true,
+    "baseUrl": "./src",
+    "skipLibCheck": true,
+    "jsx": "react",
+    "outDir": "./tsout",
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "suppressExcessPropertyErrors": true,
+    "allowUnusedLabels": true,
+    "allowUnreachableCode": true
+  },
+  "exclude": ["./types-client.tsx"],
+  "compileOnSave": false
+}
+
+// {
+//   "include": [
+//     "./src/*"
+//   ],
+//   "compilerOptions": {
+//     "strict": true,
+//     "esModuleInterop": true,
+//     "lib": [
+//       "dom",
+//       "es2015"
+//     ],
+//     "jsx": "react",
+//     "target": "es5",
+//     "allowJs": true,
+//     "skipLibCheck": true,
+//     "allowSyntheticDefaultImports": true,
+//     "forceConsistentCasingInFileNames": true,
+//     "module": "esnext",
+//     "moduleResolution": "node",
+//     "resolveJsonModule": true,
+//     "isolatedModules": true,
+//     "noEmit": true
+//   }
+// }

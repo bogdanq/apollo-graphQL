@@ -1,0 +1,32 @@
+hooks:
+  afterOneFileWrite: # После генерации файлов, форматировать притиром
+    - prettier --write
+    # - tslint --fix
+    # - eslint --fix
+generates:
+  # Генерация свагер типов <https://graphql-code-generator.com/docs/getting-started/codegen-config>
+  ./src/server/swagger-types/partner.d.ts: # Путь для генерации файла с типами
+    schema: # Путь к схеме
+      - http://localhost:8080/graphql
+    plugins: # набор плагинов
+      - typescript
+      - typescript-operations
+  # Генерация типов для клиента
+  ./src/client/gql/types/operation-result-types.tsx: # Путь для генерации файла с типами
+    schema: # Путь к схеме на сервере
+      - http://localhost:8080/graphql
+      # - ./src/server/schema/**/*.*
+    documents: ./src/client/**/*.* # Путь к файлам gql и так же смотрит запросы в других файлах <https://graphql-code-generator.com/docs/getting-started/documents-field#available-formats>
+    plugins: # набор плагинов
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config: # Конфиг для [Генерация типов для клиента]
+      reactApolloVersion: 3.1.3
+      gqlImport: graphql-tag
+      hooksImportFrom: react-apollo
+      withHooks: true
+      withHOC: false
+      withComponent: true
+      withMutationFn: false
+      withRefetchFn: false
