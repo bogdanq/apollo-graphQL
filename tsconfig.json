@@ -22,7 +22,10 @@
     "suppressImplicitAnyIndexErrors": true,
     "suppressExcessPropertyErrors": true,
     "allowUnusedLabels": true,
-    "allowUnreachableCode": true
+    "allowUnreachableCode": true,
+    "paths": {
+      "@gql/*": ["./client/gql/*"]
+    }
   },
   "exclude": ["./types-client.tsx"],
   "compileOnSave": false

@@ -21,6 +21,7 @@
     "apollo-link-error": "1.1.12",
     "apollo-link-http": "1.5.16",
     "apollo-link-rest": "0.7.3",
+    "awesome-typescript-loader": "5.2.1",
     "babel-eslint": "10.0.3",
     "babel-jest": "^24.9.0",
     "babel-loader": "8.0.6",
@@ -86,7 +87,9 @@
     "@types/react-dom": "16.9.5",
     "apollo": "2.22.0",
     "happypack": "5.0.1",
-    "typescript": "3.7.5"
+    "ttypescript": "1.5.10",
+    "typescript": "3.7.5",
+    "typescript-transform-paths": "1.1.14"
   },
   "scripts": {
     "start": "node scripts/start.js",
@@ -94,6 +97,7 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
     "generate": "graphql-codegen",
+    "createAlias": "ttsc --emitDeclarationOnly",
     "build:gqlTypes": "apollo client:codegen --endpoint=https://anilist.co/graphql --target=typescript --outputFlat --addTypename --queries=\"src/client/**/*.*\" src/client/gql/types/operation-result-types.ts"
   },
   "browserslist": [

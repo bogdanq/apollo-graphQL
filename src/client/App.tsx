@@ -12,9 +12,7 @@ import { BatchHttpLink } from 'apollo-link-batch-http'
 import { onError } from 'apollo-link-error'
 // import { RestLink } from 'apollo-link-rest'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-// import qs from "qs";
-
-import { useGetNewsListQuery } from './gql/types/operation-result-types'
+import { useGetNewsListQuery } from '@gql/types/operation-result-types'
 
 const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   if (graphQLErrors) {
