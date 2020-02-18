@@ -12,8 +12,9 @@ import { BatchHttpLink } from 'apollo-link-batch-http'
 import { onError } from 'apollo-link-error'
 // import { RestLink } from 'apollo-link-rest'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import { useGetNewsListQuery } from '@gql/types/operation-result-types'
-
+import { useGetMediaListQuery } from '@gql/types/operation-result-types'
+import { graphql } from 'graphql'
+import { codeFerstShcema } from '../server/schema/parser-schema/parser-schema'
 const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message, locations, path }) =>
@@ -26,6 +27,28 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
     console.log(`[Network error]: ${networkError}`)
   }
 })
+
+const query = `{ 
+  Page(page: 1, perPage: 10) {
+    pageInfo {
+      total
+      currentPage
+      lastPage
+      hasNextPage
+      perPage
+    }
+    media(search: "") {
+      id
+      synonyms
+      type
+      format
+    }
+  }
+}`
+
+graphql(codeFerstShcema, query)
+  .then(res => console.log('res', res))
+  .catch(e => console.log('e', e))
 
 // const authLink = new ApolloLink((operation, forward) => {
 //   // const token = false
@@ -57,7 +80,8 @@ const reportErrors = (errorCallback: any) =>
     return forward(operation)
   })
 
-const uri = 'http://localhost:8080/graphql'
+const uri = 'https://graphql.anilist.co/graphql'
+// const uri = 'http://localhost:8080/graphql'
 
 const batchLink = () => {
   return new BatchHttpLink({
@@ -96,12 +120,11 @@ const client = new ApolloClient({
 })
 
 export default function View() {
-  const { data, loading, error, refetch } = useGetNewsListQuery({
+  const { data, loading, error, refetch } = useGetMediaListQuery({
     variables: {
-      params: {
-        culture: 'ru',
-        typeNews: 'blog'
-      }
+      page: 1,
+      perPage: 10,
+      search: ''
     }
   })
 
@@ -126,7 +149,6 @@ export const App = () => {
       <button onClick={setState}>{state ? 'unmount' : 'mount'}</button>
       {state ? (
         <>
-          <View />
           <View />
         </>
       ) : (
