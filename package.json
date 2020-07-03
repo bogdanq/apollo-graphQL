@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "keywords": [],
+  "license": "ISC",
   "main": "src/index.tsx",
   "dependencies": {
     "@babel/core": "7.7.4",
@@ -40,6 +41,7 @@
     "eslint-plugin-jsx-a11y": "6.2.3",
     "eslint-plugin-react": "7.16.0",
     "eslint-plugin-react-hooks": "^1.6.1",
+    "express-graphql": "0.9.0",
     "file-loader": "4.3.0",
     "fs-extra": "^8.1.0",
     "graphql": "14.6.0",
@@ -87,12 +89,14 @@
     "@types/react-dom": "16.9.5",
     "apollo": "2.22.0",
     "happypack": "5.0.1",
+    "raw-loader": "4.0.1",
     "ttypescript": "1.5.10",
     "typescript": "3.7.5",
     "typescript-transform-paths": "1.1.14"
   },
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "concurrently \"node server/server.js\"  \"node scripts/start.js\"",
+    "start:server": "node server/server.js",
     "dev": "concurrently \"npm run clean\" \"npm run build:locales\" && concurrently --kill-others \"npm run devServer\" \"npm run devApi\" ",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",

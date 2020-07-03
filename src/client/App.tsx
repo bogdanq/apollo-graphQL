@@ -14,22 +14,11 @@ import { onError } from 'apollo-link-error'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { useGetMediaListQuery } from '@gql/types/operation-result-types'
 import { graphql } from 'graphql'
-import { codeFerstShcema } from '../server/schema/parser-schema/parser-schema'
-const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
-  if (graphQLErrors) {
-    graphQLErrors.forEach(({ message, locations, path }) =>
-      console.log(
-        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-      )
-    )
-  }
-  if (networkError) {
-    console.log(`[Network error]: ${networkError}`)
-  }
-})
+import { codeFirstShcema } from '../server/schema/parser-schema/parser-schema'
+// import schema from '../server/schema/graph-schema/schema.graphql'
 
 const query = `{ 
-  Page(page: 1, perPage: 10) {
+  Page(page: 1, perPage: 5) {
     pageInfo {
       total
       currentPage
@@ -46,8 +35,8 @@ const query = `{
   }
 }`
 
-graphql(codeFerstShcema, query)
-  .then(res => console.log('res', res))
+graphql(codeFirstShcema, query)
+  .then(res => console.log('responce with query', res))
   .catch(e => console.log('e', e))
 
 // const authLink = new ApolloLink((operation, forward) => {
@@ -64,6 +53,19 @@ graphql(codeFerstShcema, query)
 //   console.log('onError')
 //   return forward(operation)
 // })
+
+const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ message, locations, path }) =>
+      console.log(
+        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+      )
+    )
+  }
+  if (networkError) {
+    console.log(`[Network error]: ${networkError}`)
+  }
+})
 
 const myLink = new ApolloLink((operation, forward) => {
   console.log(`starting request for`, operation)
@@ -123,13 +125,13 @@ export default function View() {
   const { data, loading, error, refetch } = useGetMediaListQuery({
     variables: {
       page: 1,
-      perPage: 10,
+      perPage: 5,
       search: ''
     }
   })
 
-  console.log(data)
-  console.log(error)
+  console.log('data', data)
+  console.log('error', error)
 
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error :(</p>
@@ -138,6 +140,7 @@ export default function View() {
     <>
       <button onClick={() => refetch()}>refetch</button>
       <h1>news</h1>
+      <p>{JSON.stringify(data)}</p>
     </>
   )
 }

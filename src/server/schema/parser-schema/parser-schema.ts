@@ -6,7 +6,7 @@ import {
   GraphQLList
 } from 'graphql'
 
-export const codeFerstShcema = new GraphQLSchema({
+export const codeFirstShcema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'Query',
     fields: () => ({

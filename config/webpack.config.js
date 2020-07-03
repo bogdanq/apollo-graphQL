@@ -337,7 +337,7 @@ module.exports = function(webpackEnv) {
         },
         {
           test: /\.(graphql)$/,
-          loader: 'happypack/loader?id=raw',
+          loader: 'raw-loader',
           exclude: /node_modules/
         },
         // First, run the linter.
@@ -534,9 +534,9 @@ module.exports = function(webpackEnv) {
         loaders: ['graphql-tag/loader']
       }),
       new HappyPack({
-        id: 'gql',
+        id: 'graphql',
         threadPool: happyThreadPool,
-        loaders: ['graphql-tag/loader']
+        loaders: ['raw-loader']
       }),
       new HtmlWebpackPlugin(
         Object.assign(
