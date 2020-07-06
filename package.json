@@ -5,6 +5,16 @@
   "keywords": [],
   "license": "ISC",
   "main": "src/index.tsx",
+  "scripts": {
+    "start": "concurrently \"node src/server/server.js\"  \"node scripts/start.js\"",
+    "start:server": "node src/server/server.js",
+    "dev": "concurrently \"npm run clean\" \"npm run build:locales\" && concurrently --kill-others \"npm run devServer\" \"npm run devApi\" ",
+    "build": "node scripts/build.js",
+    "test": "node scripts/test.js --env=jsdom",
+    "generate": "graphql-codegen",
+    "createAlias": "ttsc --emitDeclarationOnly",
+    "build:gqlTypes": "apollo client:codegen --endpoint=https://anilist.co/graphql --target=typescript --outputFlat --addTypename --queries=\"src/client/**/*.*\" src/client/gql/types/operation-result-types.ts"
+  },
   "dependencies": {
     "@babel/core": "7.7.4",
     "@graphql-codegen/typescript": "1.12.2",
@@ -22,6 +32,7 @@
     "apollo-link-error": "1.1.12",
     "apollo-link-http": "1.5.16",
     "apollo-link-rest": "0.7.3",
+    "apollo-server-express": "2.15.1",
     "awesome-typescript-loader": "5.2.1",
     "babel-eslint": "10.0.3",
     "babel-jest": "^24.9.0",
@@ -93,16 +104,6 @@
     "ttypescript": "1.5.10",
     "typescript": "3.7.5",
     "typescript-transform-paths": "1.1.14"
-  },
-  "scripts": {
-    "start": "concurrently \"node server/server.js\"  \"node scripts/start.js\"",
-    "start:server": "node server/server.js",
-    "dev": "concurrently \"npm run clean\" \"npm run build:locales\" && concurrently --kill-others \"npm run devServer\" \"npm run devApi\" ",
-    "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom",
-    "generate": "graphql-codegen",
-    "createAlias": "ttsc --emitDeclarationOnly",
-    "build:gqlTypes": "apollo client:codegen --endpoint=https://anilist.co/graphql --target=typescript --outputFlat --addTypename --queries=\"src/client/**/*.*\" src/client/gql/types/operation-result-types.ts"
   },
   "browserslist": [
     ">0.2%",

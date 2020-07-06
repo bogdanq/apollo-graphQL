@@ -196,6 +196,7 @@ export type Character = {
   media?: Maybe<MediaConnection>
   updatedAt?: Maybe<Scalars['Int']>
   favourites?: Maybe<Scalars['Int']>
+  modNotes?: Maybe<Scalars['String']>
 }
 
 export type CharacterDescriptionArgs = {
@@ -277,6 +278,7 @@ export type CharacterSubmission = {
   submitter?: Maybe<User>
   status?: Maybe<SubmissionStatus>
   notes?: Maybe<Scalars['String']>
+  source?: Maybe<Scalars['String']>
   createdAt?: Maybe<Scalars['Int']>
 }
 
@@ -406,18 +408,21 @@ export type InternalPageMediaSubmissionsArgs = {
   userId?: Maybe<Scalars['Int']>
   status?: Maybe<SubmissionStatus>
   type?: Maybe<MediaType>
+  sort?: Maybe<Array<Maybe<SubmissionSort>>>
 }
 
 export type InternalPageCharacterSubmissionsArgs = {
   characterId?: Maybe<Scalars['Int']>
   userId?: Maybe<Scalars['Int']>
   status?: Maybe<SubmissionStatus>
+  sort?: Maybe<Array<Maybe<SubmissionSort>>>
 }
 
 export type InternalPageStaffSubmissionsArgs = {
   staffId?: Maybe<Scalars['Int']>
   userId?: Maybe<Scalars['Int']>
   status?: Maybe<SubmissionStatus>
+  sort?: Maybe<Array<Maybe<SubmissionSort>>>
 }
 
 export type InternalPageRevisionHistoryArgs = {
@@ -2526,6 +2531,7 @@ export type Staff = {
   submissionStatus?: Maybe<Scalars['Int']>
   submissionNotes?: Maybe<Scalars['String']>
   favourites?: Maybe<Scalars['Int']>
+  modNotes?: Maybe<Scalars['String']>
 }
 
 export type StaffDescriptionArgs = {
@@ -2623,6 +2629,7 @@ export type StaffSubmission = {
   submitter?: Maybe<User>
   status?: Maybe<SubmissionStatus>
   notes?: Maybe<Scalars['String']>
+  source?: Maybe<Scalars['String']>
   createdAt?: Maybe<Scalars['Int']>
 }
 
@@ -2681,6 +2688,11 @@ export type StudioStats = {
   amount?: Maybe<Scalars['Int']>
   meanScore?: Maybe<Scalars['Int']>
   timeWatched?: Maybe<Scalars['Int']>
+}
+
+export enum SubmissionSort {
+  Id = 'ID',
+  IdDesc = 'ID_DESC'
 }
 
 export enum SubmissionStatus {

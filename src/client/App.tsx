@@ -12,32 +12,18 @@ import { BatchHttpLink } from 'apollo-link-batch-http'
 import { onError } from 'apollo-link-error'
 // import { RestLink } from 'apollo-link-rest'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import { useGetMediaListQuery } from '@gql/types/operation-result-types'
+import { useFetchDirectorWithIdQuery } from '@gql/types/operation-result-types'
 import { graphql } from 'graphql'
-import { codeFirstShcema } from '../server/schema/parser-schema/parser-schema'
+import { codeFirstSchema } from '../server/schema/code-first'
 // import schema from '../server/schema/graph-schema/schema.graphql'
 
 const query = `{ 
-  Page(page: 1, perPage: 5) {
-    pageInfo {
-      total
-      currentPage
-      lastPage
-      hasNextPage
-      perPage
-    }
-    media(search: "") {
-      id
-      synonyms
-      type
-      format
-    }
-  }
+  hello
 }`
 
-graphql(codeFirstShcema, query)
+graphql(codeFirstSchema as any, query)
   .then(res => console.log('responce with query', res))
-  .catch(e => console.log('e', e))
+  .catch(e => console.log('graphql e', e))
 
 // const authLink = new ApolloLink((operation, forward) => {
 //   // const token = false
@@ -62,6 +48,7 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
       )
     )
   }
+
   if (networkError) {
     console.log(`[Network error]: ${networkError}`)
   }
@@ -82,8 +69,8 @@ const reportErrors = (errorCallback: any) =>
     return forward(operation)
   })
 
-const uri = 'https://graphql.anilist.co/graphql'
-// const uri = 'http://localhost:8080/graphql'
+// const uri = 'https://graphql.anilist.co/graphql'
+const uri = 'http://localhost:8080/graphql'
 
 const batchLink = () => {
   return new BatchHttpLink({
@@ -122,16 +109,14 @@ const client = new ApolloClient({
 })
 
 export default function View() {
-  const { data, loading, error, refetch } = useGetMediaListQuery({
+  const { data, loading, error, refetch } = useFetchDirectorWithIdQuery({
     variables: {
-      page: 1,
-      perPage: 5,
-      search: ''
+      id: 1
     }
   })
 
-  console.log('data', data)
-  console.log('error', error)
+  console.log('useFetchDirectorWithIdQuery Data', data)
+  console.log('useFetchDirectorWithIdQuery Error', error)
 
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error :(</p>
@@ -139,7 +124,7 @@ export default function View() {
   return (
     <>
       <button onClick={() => refetch()}>refetch</button>
-      <h1>news</h1>
+      <h1>Data</h1>
       <p>{JSON.stringify(data)}</p>
     </>
   )
@@ -147,6 +132,7 @@ export default function View() {
 
 export const App = () => {
   const [state, setState] = React.useReducer(prev => !prev, true)
+
   return (
     <ApolloProvider client={client}>
       <button onClick={setState}>{state ? 'unmount' : 'mount'}</button>
@@ -160,6 +146,3 @@ export const App = () => {
     </ApolloProvider>
   )
 }
-/**
-
- */
