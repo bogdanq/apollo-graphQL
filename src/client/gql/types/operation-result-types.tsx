@@ -12,12 +12,6 @@ export type Scalars = {
   Boolean: boolean
   Int: number
   Float: number
-  Upload: any
-}
-
-export enum CacheControlScope {
-  Public = 'PUBLIC',
-  Private = 'PRIVATE'
 }
 
 export type Director = {
@@ -26,6 +20,7 @@ export type Director = {
   name: Scalars['String']
   age: Scalars['Int']
   movies: Array<Movie>
+  getInformation: Scalars['String']
 }
 
 export type Movie = {
@@ -41,6 +36,7 @@ export type Query = {
   movie: Movie
   director: Director
   hello: Scalars['String']
+  getInformation: Scalars['String']
 }
 
 export type QueryMovieArgs = {

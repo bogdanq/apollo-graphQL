@@ -1,8 +1,13 @@
 const { gql } = require('apollo-server-express')
 
-const typeDefs = gql`
+const movieSchema = gql`
   schema {
     query: Query
+    mutation: Mutation
+  }
+
+  type Mutation {
+    nope(nope: Int!): Int
   }
 
   type Query {
@@ -23,7 +28,18 @@ const typeDefs = gql`
     name: String!
     age: Int!
     movies: [Movie!]!
+    getInformation: String!
   }
 `
 
-module.exports = { typeDefs }
+const userSchema = gql`
+  extend type Query {
+    getInformation: String!
+  }
+
+  extend type Mutation {
+    update: String!
+  }
+`
+
+module.exports = { userSchema, movieSchema }

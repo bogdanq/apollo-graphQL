@@ -1,14 +1,19 @@
 const express = require('express')
 const { ApolloServer } = require('apollo-server-express')
-const { typeDefs } = require('./schema/schema')
-// const { codeFirstSchema } = require('./schema/code-first')
-const { resolvers } = require('./resolvers')
+const { makeExecutableSchema } = require('apollo-server')
+const { movieSchema, userSchema } = require('./schema/schema')
+const { movieResolvers, userResolvers } = require('./resolvers')
+const merge = require('lodash/merge')
 
 const app = express()
 
+const schema = makeExecutableSchema({
+  typeDefs: [movieSchema, userSchema],
+  resolvers: merge(movieResolvers, userResolvers)
+})
+
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  schema,
   context: { text: 'some text' }
   // context: async ({ req }) => ({})
 })

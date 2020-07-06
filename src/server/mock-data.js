@@ -37,4 +37,22 @@ const directors = [
   }
 ]
 
-module.exports = { directors, movies }
+const users = [
+  {
+    id: 1,
+    name: 'user 1',
+    bio: {}
+  },
+  {
+    id: 2,
+    name: 'user 2',
+    bio: {}
+  },
+  {
+    id: 3,
+    name: 'user 3',
+    bio: {}
+  }
+]
+
+module.exports = { directors, movies, users }
