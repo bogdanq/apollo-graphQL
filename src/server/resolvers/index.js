@@ -3,17 +3,36 @@ const { movies, directors } = require('../mock-data')
 const movieResolvers = {
   // Корневой тип Query
   Query: {
+    // ресолв корневых запросов
+    authorized: (parent, args, { session }) => {
+      if (!session) {
+        return null
+      }
+
+      return session
+    },
+    guest: () => ({}),
+    administrator: (parent, args, { session, hasRole }) => {
+      if (hasRole('ADMIN')) {
+        return {}
+      }
+
+      throw Error('Нет прав!')
+    }
+  },
+  GuestQuery: {
     movie: (parent, args, ctx) => {
       return movies.find(item => item.id === args.id)
     },
-    hello: (parent, args, ctx) => {
+    hello: (parent, args, ctx, info) => {
       return 'Hello graphql'
-    },
+    }
+  },
+  AuthorizedQuery: {
     director: (parent, args, ctx) => {
       return directors.find(item => item.id === args.id)
     }
   },
-
   // Тип Director, у него нужно зарезолвить поле movies
   // в code first резолвер указывается в типе
   // в схеме его нужно указать в нужном типе
@@ -28,9 +47,9 @@ const movieResolvers = {
 }
 
 const userResolvers = {
-  Query: {
+  GuestQuery: {
     getInformation: (parent, args, ctx) => {
-      return 'getInformation in userResolvers'
+      return 'getInformation in GuestQuery'
     }
   },
   Mutation: {
@@ -40,4 +59,12 @@ const userResolvers = {
   }
 }
 
-module.exports = { movieResolvers, userResolvers }
+const adminResolvers = {
+  AdministratorQuery: {
+    getUserInfoWithID: () => {
+      return 'getUserInfoWithID success'
+    }
+  }
+}
+
+module.exports = { movieResolvers, userResolvers, adminResolvers }

@@ -14,6 +14,15 @@ export type Scalars = {
   Float: number
 }
 
+export type AuthorizedQuery = {
+  __typename?: 'AuthorizedQuery'
+  director: Director
+}
+
+export type AuthorizedQueryDirectorArgs = {
+  id: Scalars['Int']
+}
+
 export type Director = {
   __typename?: 'Director'
   id: Scalars['ID']
@@ -21,6 +30,16 @@ export type Director = {
   age: Scalars['Int']
   movies: Array<Movie>
   getInformation: Scalars['String']
+}
+
+export type GuestQuery = {
+  __typename?: 'GuestQuery'
+  hello: Scalars['String']
+  movie: Movie
+}
+
+export type GuestQueryMovieArgs = {
+  id: Scalars['Int']
 }
 
 export type Movie = {
@@ -31,20 +50,21 @@ export type Movie = {
   directorId: Scalars['ID']
 }
 
+export type Mutation = {
+  __typename?: 'Mutation'
+  nope?: Maybe<Scalars['Int']>
+  update: Scalars['String']
+}
+
+export type MutationNopeArgs = {
+  nope: Scalars['Int']
+}
+
 export type Query = {
   __typename?: 'Query'
-  movie: Movie
-  director: Director
-  hello: Scalars['String']
+  authorized?: Maybe<AuthorizedQuery>
+  guest?: Maybe<GuestQuery>
   getInformation: Scalars['String']
-}
-
-export type QueryMovieArgs = {
-  id: Scalars['Int']
-}
-
-export type QueryDirectorArgs = {
-  id: Scalars['Int']
 }
 
 export type FetchDirectorWithIdQueryVariables = {
@@ -52,25 +72,31 @@ export type FetchDirectorWithIdQueryVariables = {
 }
 
 export type FetchDirectorWithIdQuery = { __typename?: 'Query' } & {
-  director: { __typename?: 'Director' } & Pick<
-    Director,
-    'id' | 'name' | 'age'
-  > & {
-      movies: Array<
-        { __typename?: 'Movie' } & Pick<Movie, 'directorId' | 'name'>
-      >
+  authorized: Maybe<
+    { __typename?: 'AuthorizedQuery' } & {
+      director: { __typename?: 'Director' } & Pick<
+        Director,
+        'id' | 'name' | 'age'
+      > & {
+          movies: Array<
+            { __typename?: 'Movie' } & Pick<Movie, 'directorId' | 'name'>
+          >
+        }
     }
+  >
 }
 
 export const FetchDirectorWithIdDocument = gql`
   query fetchDirectorWithID($id: Int!) {
-    director(id: $id) {
-      id
-      name
-      age
-      movies {
-        directorId
+    authorized {
+      director(id: $id) {
+        id
         name
+        age
+        movies {
+          directorId
+          name
+        }
       }
     }
   }

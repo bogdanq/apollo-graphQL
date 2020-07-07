@@ -1,11 +1,13 @@
 query fetchDirectorWithID($id: Int!) {
-  director(id: $id) {
-    id
-    name
-    age
-    movies {
-      directorId
+  authorized {
+    director(id: $id) {
+      id
       name
+      age
+      movies {
+        directorId
+        name
+      }
     }
   }
 }
