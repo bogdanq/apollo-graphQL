@@ -1,15 +1,31 @@
 const express = require('express')
 const { ApolloServer, makeExecutableSchema } = require('apollo-server-express')
 
-const { movieSchema, userSchema, adminSchema } = require('./schema/schema')
-const { movieResolvers, userResolvers, adminResolvers } = require('./resolvers')
+const {
+  rootSchema,
+  adminSchema,
+  authSchema,
+  guestSchema
+} = require('./schema/schema')
+const {
+  guestResolvers,
+  authorizedResolvers,
+  adminResolvers
+} = require('./resolvers')
+
 const merge = require('lodash/merge')
 
 const app = express()
 
+const resolversMerged = merge(
+  guestResolvers,
+  authorizedResolvers,
+  adminResolvers
+)
+
 const schema = makeExecutableSchema({
-  typeDefs: [movieSchema, userSchema, adminSchema],
-  resolvers: merge(movieResolvers, userResolvers, adminResolvers)
+  typeDefs: [rootSchema, adminSchema, authSchema, guestSchema],
+  resolvers: resolversMerged
 })
 
 const server = new ApolloServer({

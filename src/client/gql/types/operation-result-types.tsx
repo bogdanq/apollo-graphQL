@@ -14,6 +14,26 @@ export type Scalars = {
   Float: number
 }
 
+export type AdministratorQuery = {
+  __typename?: 'AdministratorQuery'
+  nope?: Maybe<Scalars['Int']>
+  getUserInfoWithID: Scalars['String']
+}
+
+export type AdministratorQueryNopeArgs = {
+  nope: Scalars['Int']
+}
+
+export type AuthorizedMutation = {
+  __typename?: 'AuthorizedMutation'
+  nope?: Maybe<Scalars['Int']>
+  update: Scalars['String']
+}
+
+export type AuthorizedMutationNopeArgs = {
+  nope: Scalars['Int']
+}
+
 export type AuthorizedQuery = {
   __typename?: 'AuthorizedQuery'
   director: Director
@@ -36,6 +56,7 @@ export type GuestQuery = {
   __typename?: 'GuestQuery'
   hello: Scalars['String']
   movie: Movie
+  getInformation: Scalars['String']
 }
 
 export type GuestQueryMovieArgs = {
@@ -52,19 +73,14 @@ export type Movie = {
 
 export type Mutation = {
   __typename?: 'Mutation'
-  nope?: Maybe<Scalars['Int']>
-  update: Scalars['String']
-}
-
-export type MutationNopeArgs = {
-  nope: Scalars['Int']
+  authorized?: Maybe<AuthorizedMutation>
 }
 
 export type Query = {
   __typename?: 'Query'
   authorized?: Maybe<AuthorizedQuery>
   guest?: Maybe<GuestQuery>
-  getInformation: Scalars['String']
+  administrator?: Maybe<AdministratorQuery>
 }
 
 export type FetchDirectorWithIdQueryVariables = {
