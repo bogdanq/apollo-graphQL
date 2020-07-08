@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server-express')
+const { gql } = require('apollo-server')
 const { adminSchema } = require('./admin')
 const { authSchema } = require('./authorized')
 const { guestSchema } = require('./guest')
@@ -8,10 +8,15 @@ const rootSchema = gql`
   schema {
     query: Query
     mutation: Mutation
+    subscription: Subscription
   }
 
   type Mutation {
     authorized: AuthorizedMutation
+  }
+
+  type Subscription {
+    LikeToggled: Like
   }
 
   type Query {
@@ -38,6 +43,11 @@ const rootSchema = gql`
   # Запросы для всех
   type GuestQuery {
     nope(nope: Int!): Int
+  }
+
+  type Like {
+    id: Int!
+    isLiked: Boolean!
   }
 `
 

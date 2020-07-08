@@ -435,6 +435,7 @@ export type InternalPageRevisionHistoryArgs = {
 
 export type InternalPageModActionsArgs = {
   userId?: Maybe<Scalars['Int']>
+  modId?: Maybe<Scalars['Int']>
 }
 
 export type InternalPageUsersArgs = {

@@ -1,3 +1,4 @@
+const { withFilter } = require('apollo-server')
 const { directors, movies } = require('../mock-data')
 
 const authorizedResolvers = {
@@ -22,10 +23,30 @@ const authorizedResolvers = {
       return session
     }
   },
+  Subscription: {
+    // резолв подписок с авторизацией
+    LikeToggled: {
+      resolve: (source, args) => {
+        return source
+      },
+      subscribe: (_, __, { pubSub }) => {
+        return pubSub.asyncIterator(['LIKE_TOGGLE'])
+      }
+    }
+  },
 
   AuthorizedMutation: {
-    update: (parent, args, ctx) => {
-      return 'update success'
+    toggleLike: (parent, { id }, { pubSub }) => {
+      const findedMovie = movies.find(item => item.id === id)
+
+      const like = {
+        id: findedMovie.id,
+        isLiked: !findedMovie.like.isLiked
+      }
+
+      pubSub.publish('LIKE_TOGGLE', like)
+
+      return like
     }
   },
   AuthorizedQuery: {

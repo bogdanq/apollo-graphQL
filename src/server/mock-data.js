@@ -3,19 +3,31 @@ const movies = [
     id: 1,
     name: 'Movie 1',
     year: 2018,
-    directorId: 1
+    directorId: 1,
+    like: {
+      id: 1,
+      isLiked: true
+    }
   },
   {
     id: 2,
     name: 'Movie 2',
     year: 2017,
-    directorId: 1
+    directorId: 1,
+    like: {
+      id: 2,
+      isLiked: false
+    }
   },
   {
     id: 3,
     name: 'Movie 3',
     year: 2016,
-    directorId: 3
+    directorId: 3,
+    like: {
+      id: 3,
+      isLiked: true
+    }
   }
 ]
 

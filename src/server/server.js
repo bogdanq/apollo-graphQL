@@ -1,6 +1,6 @@
-const express = require('express')
-const { ApolloServer, makeExecutableSchema } = require('apollo-server-express')
-
+// const express = require('express')
+// const { ApolloServer, makeExecutableSchema } = require('apollo-server-express')
+const { ApolloServer, makeExecutableSchema, PubSub } = require('apollo-server')
 const {
   rootSchema,
   adminSchema,
@@ -15,7 +15,7 @@ const {
 
 const merge = require('lodash/merge')
 
-const app = express()
+const pubSub = new PubSub()
 
 const resolversMerged = merge(
   guestResolvers,
@@ -35,9 +35,7 @@ const server = new ApolloServer({
   playground: true
 })
 
-server.applyMiddleware({ app })
-
-app.listen({ port: 8080 }, () =>
+server.listen({ port: 8080 }, () =>
   console.log(`🚀 Server ready at http://localhost:8080${server.graphqlPath}`)
 )
 
@@ -50,7 +48,8 @@ const hasRole = user => role => {
   return false
 }
 
-async function getContextFromRequest({ req }) {
+async function getContextFromRequest({ req, connection }) {
+  console.log('connection', connection)
   let user
 
   try {
@@ -59,7 +58,13 @@ async function getContextFromRequest({ req }) {
     throw new Error('You provide incorrect token!')
   }
 
-  return { request: req, session: { ...user }, hasRole: hasRole(user) }
+  return {
+    request: req,
+    session: { ...user },
+    hasRole: hasRole(user),
+    pubSub,
+    connection
+  }
 }
 
 async function getUserFromReq(req) {

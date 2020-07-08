@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server-express')
+const { gql } = require('apollo-server')
 
 const authSchema = gql`
   extend type AuthorizedQuery {
@@ -6,7 +6,7 @@ const authSchema = gql`
   }
 
   extend type AuthorizedMutation {
-    update: String!
+    toggleLike(id: Int!): Like!
   }
 
   type Movie {

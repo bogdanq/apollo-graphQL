@@ -27,16 +27,25 @@ export type AdministratorQueryNopeArgs = {
 export type AuthorizedMutation = {
   __typename?: 'AuthorizedMutation'
   nope?: Maybe<Scalars['Int']>
-  update: Scalars['String']
+  toggleLike: Like
 }
 
 export type AuthorizedMutationNopeArgs = {
   nope: Scalars['Int']
 }
 
+export type AuthorizedMutationToggleLikeArgs = {
+  id: Scalars['Int']
+}
+
 export type AuthorizedQuery = {
   __typename?: 'AuthorizedQuery'
+  nope?: Maybe<Scalars['Int']>
   director: Director
+}
+
+export type AuthorizedQueryNopeArgs = {
+  nope: Scalars['Int']
 }
 
 export type AuthorizedQueryDirectorArgs = {
@@ -54,13 +63,24 @@ export type Director = {
 
 export type GuestQuery = {
   __typename?: 'GuestQuery'
+  nope?: Maybe<Scalars['Int']>
   hello: Scalars['String']
   movie: Movie
   getInformation: Scalars['String']
 }
 
+export type GuestQueryNopeArgs = {
+  nope: Scalars['Int']
+}
+
 export type GuestQueryMovieArgs = {
   id: Scalars['Int']
+}
+
+export type Like = {
+  __typename?: 'Like'
+  id: Scalars['Int']
+  isLiked: Scalars['Boolean']
 }
 
 export type Movie = {
@@ -81,6 +101,11 @@ export type Query = {
   authorized?: Maybe<AuthorizedQuery>
   guest?: Maybe<GuestQuery>
   administrator?: Maybe<AdministratorQuery>
+}
+
+export type Subscription = {
+  __typename?: 'Subscription'
+  LikeToggled?: Maybe<Like>
 }
 
 export type FetchDirectorWithIdQueryVariables = {
