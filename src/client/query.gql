@@ -1,12 +1,12 @@
 query fetchDirectorWithID($id: Int!) {
   authorized {
     director(id: $id) {
-      id
+      directorId
       name
       age
       movies {
         directorId
-        name
+        title
       }
     }
   }

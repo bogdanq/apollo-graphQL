@@ -46,8 +46,8 @@ const rootSchema = gql`
   }
 
   type Like {
-    id: Int!
-    isLiked: Boolean!
+    id: String!
+    likes: Int!
   }
 `
 

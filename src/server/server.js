@@ -1,5 +1,5 @@
-// const express = require('express')
-// const { ApolloServer, makeExecutableSchema } = require('apollo-server-express')
+require('dotenv').config()
+
 const { ApolloServer, makeExecutableSchema, PubSub } = require('apollo-server')
 const {
   rootSchema,
@@ -12,8 +12,16 @@ const {
   authorizedResolvers,
   adminResolvers
 } = require('./resolvers')
-
+const mongoose = require('mongoose')
 const merge = require('lodash/merge')
+
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(mongodb => mongodb)
+  .catch(err => err)
 
 const pubSub = new PubSub()
 
@@ -49,7 +57,6 @@ const hasRole = user => role => {
 }
 
 async function getContextFromRequest({ req, connection }) {
-  console.log('connection', connection)
   let user
 
   try {

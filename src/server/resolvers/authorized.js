@@ -1,5 +1,7 @@
-const { withFilter } = require('apollo-server')
+// const { withFilter } = require('apollo-server')
 const { directors, movies } = require('../mock-data')
+const { MoviesModel } = require('../models/movies')
+const { DirectorsModel } = require('../models/directors')
 
 const authorizedResolvers = {
   // Корневой тип Query
@@ -23,35 +25,27 @@ const authorizedResolvers = {
       return session
     }
   },
-  Subscription: {
-    // резолв подписок с авторизацией
-    LikeToggled: {
-      resolve: (source, args) => {
-        return source
-      },
-      subscribe: (_, __, { pubSub }) => {
-        return pubSub.asyncIterator(['LIKE_TOGGLE'])
-      }
-    }
-  },
 
   AuthorizedMutation: {
-    toggleLike: (parent, { id }, { pubSub }) => {
-      const findedMovie = movies.find(item => item.id === id)
+    toggleLike: async (parent, { id }, { pubSub }) => {
+      const findedMovie = await getMovieAndUpdate(id)
 
-      const like = {
-        id: findedMovie.id,
-        isLiked: !findedMovie.like.isLiked
+      const updatedLike = {
+        id: findedMovie._id,
+        likes: findedMovie.likes
       }
 
-      pubSub.publish('LIKE_TOGGLE', like)
+      pubSub.publish('LIKE_TOGGLE', updatedLike)
 
-      return like
+      return updatedLike
     }
   },
   AuthorizedQuery: {
-    director: (parent, args, ctx) => {
-      return directors.find(item => item.id === args.id)
+    director: (parent, { id }, ctx) => {
+      return getDirectorById(id)
+    },
+    directors: (parent, args, ctx) => {
+      return getDirectors()
     }
   },
 
@@ -59,8 +53,8 @@ const authorizedResolvers = {
   // в code first резолвер указывается в типе
   // в схеме его нужно указать в нужном типе
   Director: {
-    movies: (parent, args, ctx) => {
-      return movies.filter(item => item.directorId === parent.id)
+    movies: ({ directorId }, args, ctx) => {
+      return getMovieById(directorId, 'directorId')
     },
     getInformation: () => {
       return 'getInformation in Director'
@@ -69,3 +63,50 @@ const authorizedResolvers = {
 }
 
 module.exports = { authorizedResolvers }
+
+const getDirectorById = async id => {
+  try {
+    return await DirectorsModel.findOne({
+      directorId: id
+    })
+  } catch (e) {
+    return 'При добавлении работы произошла ошибка'
+  }
+}
+
+const getMovieAndUpdate = async (id, field = '_id') => {
+  try {
+    const movie = await MoviesModel.findOne({
+      [field]: id
+    })
+
+    await MoviesModel.updateOne(
+      {
+        [field]: id
+      },
+      { likes: movie.likes + 1 }
+    )
+
+    return { ...movie._doc, likes: movie.likes + 1 }
+  } catch (e) {
+    return 'При добавлении работы произошла ошибка'
+  }
+}
+
+const getMovieById = async (id, field = '_id') => {
+  try {
+    return await MoviesModel.find({
+      [field]: 12
+    })
+  } catch (e) {
+    return 'При добавлении работы произошла ошибка'
+  }
+}
+
+const getDirectors = async () => {
+  try {
+    return await DirectorsModel.find()
+  } catch (e) {
+    return 'При добавлении работы произошла ошибка'
+  }
+}

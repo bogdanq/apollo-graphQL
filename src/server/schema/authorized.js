@@ -3,21 +3,24 @@ const { gql } = require('apollo-server')
 const authSchema = gql`
   extend type AuthorizedQuery {
     director(id: Int!): Director!
+    directors: [Director!]!
   }
 
   extend type AuthorizedMutation {
-    toggleLike(id: Int!): Like!
+    toggleLike(id: String!): Like!
   }
 
   type Movie {
     id: ID!
-    name: String!
+    title: String!
+    description: String!
     year: Int!
-    directorId: ID!
+    directorId: Int!
+    likes: Int!
   }
 
   type Director {
-    id: ID!
+    directorId: ID!
     name: String!
     age: Int!
     movies: [Movie!]!

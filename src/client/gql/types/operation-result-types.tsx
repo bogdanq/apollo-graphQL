@@ -35,13 +35,14 @@ export type AuthorizedMutationNopeArgs = {
 }
 
 export type AuthorizedMutationToggleLikeArgs = {
-  id: Scalars['Int']
+  id: Scalars['String']
 }
 
 export type AuthorizedQuery = {
   __typename?: 'AuthorizedQuery'
   nope?: Maybe<Scalars['Int']>
   director: Director
+  directors: Array<Director>
 }
 
 export type AuthorizedQueryNopeArgs = {
@@ -54,7 +55,7 @@ export type AuthorizedQueryDirectorArgs = {
 
 export type Director = {
   __typename?: 'Director'
-  id: Scalars['ID']
+  directorId: Scalars['ID']
   name: Scalars['String']
   age: Scalars['Int']
   movies: Array<Movie>
@@ -66,6 +67,7 @@ export type GuestQuery = {
   nope?: Maybe<Scalars['Int']>
   hello: Scalars['String']
   movie: Movie
+  movies: Array<Movie>
   getInformation: Scalars['String']
 }
 
@@ -74,21 +76,23 @@ export type GuestQueryNopeArgs = {
 }
 
 export type GuestQueryMovieArgs = {
-  id: Scalars['Int']
+  id: Scalars['String']
 }
 
 export type Like = {
   __typename?: 'Like'
   id: Scalars['Int']
-  isLiked: Scalars['Boolean']
+  likes: Scalars['Int']
 }
 
 export type Movie = {
   __typename?: 'Movie'
   id: Scalars['ID']
-  name: Scalars['String']
+  title: Scalars['String']
+  description: Scalars['String']
   year: Scalars['Int']
-  directorId: Scalars['ID']
+  directorId: Scalars['Int']
+  likes: Scalars['Int']
 }
 
 export type Mutation = {
@@ -117,10 +121,10 @@ export type FetchDirectorWithIdQuery = { __typename?: 'Query' } & {
     { __typename?: 'AuthorizedQuery' } & {
       director: { __typename?: 'Director' } & Pick<
         Director,
-        'id' | 'name' | 'age'
+        'directorId' | 'name' | 'age'
       > & {
           movies: Array<
-            { __typename?: 'Movie' } & Pick<Movie, 'directorId' | 'name'>
+            { __typename?: 'Movie' } & Pick<Movie, 'directorId' | 'title'>
           >
         }
     }
@@ -131,12 +135,12 @@ export const FetchDirectorWithIdDocument = gql`
   query fetchDirectorWithID($id: Int!) {
     authorized {
       director(id: $id) {
-        id
+        directorId
         name
         age
         movies {
           directorId
-          name
+          title
         }
       }
     }
