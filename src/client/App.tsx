@@ -12,7 +12,10 @@ import { BatchHttpLink } from 'apollo-link-batch-http'
 import { onError } from 'apollo-link-error'
 // import { RestLink } from 'apollo-link-rest'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import { useFetchDirectorWithIdQuery } from '@gql/types/operation-result-types'
+import {
+  useFetchDirectorWithIdQuery,
+  Movie
+} from '@gql/types/operation-result-types'
 import { graphql } from 'graphql'
 import { codeFirstSchema } from '../server/schema/code-first'
 // import schema from '../server/schema/graph-schema/schema.graphql'
@@ -111,7 +114,7 @@ const client = new ApolloClient({
 export default function View() {
   const { data, loading, error, refetch } = useFetchDirectorWithIdQuery({
     variables: {
-      id: 1
+      id: 12
     }
   })
 
@@ -121,12 +124,44 @@ export default function View() {
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error :(</p>
 
+  const director = data?.authorized?.director
+
+  console.log(director)
+
   return (
     <>
       <button onClick={() => refetch()}>refetch</button>
-      <h1>Data</h1>
-      <p>{JSON.stringify(data)}</p>
+      <h1>Current Director</h1>
+      <h3>directorId - {director?.directorId}</h3>
+      <h3>name - {director?.name}</h3>
+      <h3>age -{director?.age}</h3>
+
+      <Movies movies={director?.movies} />
     </>
+  )
+}
+
+function Movies({
+  movies
+}: {
+  movies?: Array<
+    { __typename?: 'Movie' } & Pick<
+      Movie,
+      'title' | 'description' | 'year' | 'directorId' | 'likes'
+    >
+  >
+}) {
+  return (
+    <div>
+      <h2>Movies</h2>
+      {(movies || []).map(item => (
+        <div key={item.title}>
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
+          <button>likes: {item.likes}</button>
+        </div>
+      ))}
+    </div>
   )
 }
 

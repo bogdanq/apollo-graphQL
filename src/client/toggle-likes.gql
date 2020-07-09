@@ -1,0 +1,8 @@
+mutation ToggleLike($id: String!) {
+  authorized {
+    toggleLike(id: $id) {
+      id
+      likes
+    }
+  }
+}

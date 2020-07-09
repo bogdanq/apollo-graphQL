@@ -81,7 +81,7 @@ export type GuestQueryMovieArgs = {
 
 export type Like = {
   __typename?: 'Like'
-  id: Scalars['Int']
+  id: Scalars['String']
   likes: Scalars['Int']
 }
 
@@ -124,7 +124,10 @@ export type FetchDirectorWithIdQuery = { __typename?: 'Query' } & {
         'directorId' | 'name' | 'age'
       > & {
           movies: Array<
-            { __typename?: 'Movie' } & Pick<Movie, 'directorId' | 'title'>
+            { __typename?: 'Movie' } & Pick<
+              Movie,
+              'title' | 'description' | 'year' | 'directorId' | 'likes'
+            >
           >
         }
     }
@@ -139,8 +142,11 @@ export const FetchDirectorWithIdDocument = gql`
         name
         age
         movies {
-          directorId
           title
+          description
+          year
+          directorId
+          likes
         }
       }
     }

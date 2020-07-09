@@ -1,0 +1,6 @@
+subscription Like {
+  LikeToggled {
+    id
+    likes
+  }
+}

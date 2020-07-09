@@ -5,8 +5,11 @@ query fetchDirectorWithID($id: Int!) {
       name
       age
       movies {
-        directorId
         title
+        description
+        year
+        directorId
+        likes
       }
     }
   }
