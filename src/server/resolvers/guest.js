@@ -1,4 +1,4 @@
-const { MoviesModel } = require('../models/movies')
+const { getMovies, getMovieById } = require('../controllers')
 
 const guestResolvers = {
   // Корневой тип Query
@@ -35,21 +35,3 @@ const guestResolvers = {
 }
 
 module.exports = { guestResolvers }
-
-const getMovieById = async id => {
-  try {
-    return await MoviesModel.findOne({
-      _id: id
-    })
-  } catch (e) {
-    return 'При добавлении работы произошла ошибка'
-  }
-}
-
-const getMovies = async () => {
-  try {
-    return await MoviesModel.find()
-  } catch (e) {
-    return 'При добавлении работы произошла ошибка'
-  }
-}

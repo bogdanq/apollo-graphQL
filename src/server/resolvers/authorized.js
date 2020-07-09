@@ -1,7 +1,11 @@
 // const { withFilter } = require('apollo-server')
-const { directors, movies } = require('../mock-data')
-const { MoviesModel } = require('../models/movies')
-const { DirectorsModel } = require('../models/directors')
+
+const {
+  getMovieAndUpdate,
+  getDirectorById,
+  getDirectors,
+  getMoviesById
+} = require('../controllers')
 
 const authorizedResolvers = {
   // Корневой тип Query
@@ -54,7 +58,7 @@ const authorizedResolvers = {
   // в схеме его нужно указать в нужном типе
   Director: {
     movies: ({ directorId }, args, ctx) => {
-      return getMovieById(directorId, 'directorId')
+      return getMoviesById(directorId, 'directorId')
     },
     getInformation: () => {
       return 'getInformation in Director'
@@ -63,50 +67,3 @@ const authorizedResolvers = {
 }
 
 module.exports = { authorizedResolvers }
-
-const getDirectorById = async id => {
-  try {
-    return await DirectorsModel.findOne({
-      directorId: id
-    })
-  } catch (e) {
-    return 'При добавлении работы произошла ошибка'
-  }
-}
-
-const getMovieAndUpdate = async (id, field = '_id') => {
-  try {
-    const movie = await MoviesModel.findOne({
-      [field]: id
-    })
-
-    await MoviesModel.updateOne(
-      {
-        [field]: id
-      },
-      { likes: movie.likes + 1 }
-    )
-
-    return { ...movie._doc, likes: movie.likes + 1 }
-  } catch (e) {
-    return 'При добавлении работы произошла ошибка'
-  }
-}
-
-const getMovieById = async (id, field = '_id') => {
-  try {
-    return await MoviesModel.find({
-      [field]: 12
-    })
-  } catch (e) {
-    return 'При добавлении работы произошла ошибка'
-  }
-}
-
-const getDirectors = async () => {
-  try {
-    return await DirectorsModel.find()
-  } catch (e) {
-    return 'При добавлении работы произошла ошибка'
-  }
-}
