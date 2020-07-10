@@ -36,7 +36,7 @@ const authorizedResolvers = {
 
       const updatedLike = {
         id: findedMovie._id,
-        likes: findedMovie.likes
+        likes: findedMovie.likes + 1
       }
 
       pubSub.publish('LIKE_TOGGLE', updatedLike)

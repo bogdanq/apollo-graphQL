@@ -16,7 +16,7 @@ const rootSchema = gql`
   }
 
   type Subscription {
-    LikeToggled: Like
+    LikeToggled: Like!
   }
 
   type Query {

@@ -13,7 +13,7 @@ const guestResolvers = {
         return source
       },
       subscribe: (_, __, { pubSub }) => {
-        return pubSub.asyncIterator(['LIKE_TOGGLE'])
+        return pubSub.asyncIterator('LIKE_TOGGLE')
       }
     }
   },

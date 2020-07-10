@@ -296,6 +296,7 @@ module.exports = function(webpackEnv) {
         .filter(ext => useTypeScript || !ext.includes('ts')),
       alias: {
         '@gql': path.resolve(__dirname, '../src/client/gql'),
+        '@components': path.resolve(__dirname, '../src/client/components'),
         // Support React Native Web
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
         'react-native': 'react-native-web',
