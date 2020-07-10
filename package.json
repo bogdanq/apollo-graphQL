@@ -6,7 +6,7 @@
   "license": "ISC",
   "main": "src/index.tsx",
   "scripts": {
-    "start": "concurrently \"node src/server/server.js\"  \"node scripts/start.js\"",
+    "start": "cross-env URI=http://localhost:8080/graphql concurrently \"node src/server/server.js\"  \"node scripts/start.js\"",
     "start:server": "node src/server/server.js",
     "dev": "concurrently \"npm run clean\" \"npm run build:locales\" && concurrently --kill-others \"npm run devServer\" \"npm run devApi\" ",
     "build": "node scripts/build.js",

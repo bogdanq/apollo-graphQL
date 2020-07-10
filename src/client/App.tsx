@@ -1,24 +1,28 @@
-import React from 'react'
-// import ApolloClient from "apollo-boost";
+import React, { useState } from 'react'
 import { ApolloClient } from 'apollo-client'
 import { ApolloLink } from 'apollo-link'
-import { ApolloProvider } from 'react-apollo'
-// import * as _ from "lodash";
-// import gql from 'graphql-tag'
-// import gql from "graphql-tag";
-import './styles.css'
-import { HttpLink } from 'apollo-link-http'
-import { BatchHttpLink } from 'apollo-link-batch-http'
-import { onError } from 'apollo-link-error'
-// import { RestLink } from 'apollo-link-rest'
+import { ApolloProvider, MutationFunction } from 'react-apollo'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import {
   useFetchDirectorWithIdQuery,
-  Movie
+  useToggleLikeMutation,
+  Movie,
+  FetchDirectorWithIdQuery,
+  ToggleLikeMutation,
+  ToggleLikeMutationVariables
 } from '@gql/types/operation-result-types'
 import { graphql } from 'graphql'
 import { codeFirstSchema } from '../server/schema/code-first'
-// import schema from '../server/schema/graph-schema/schema.graphql'
+import {
+  batchLink,
+  httpLink,
+  myLink,
+  reportErrors,
+  errorLink
+} from './apollo-links'
+import GET_DIRECTORS from './query.gql'
+
+import './styles.css'
 
 const query = `{ 
   hello
@@ -43,78 +47,40 @@ graphql(codeFirstSchema as any, query)
 //   return forward(operation)
 // })
 
-const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
-  if (graphQLErrors) {
-    graphQLErrors.forEach(({ message, locations, path }) =>
-      console.log(
-        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-      )
-    )
-  }
-
-  if (networkError) {
-    console.log(`[Network error]: ${networkError}`)
-  }
-})
-
-const myLink = new ApolloLink((operation, forward) => {
-  console.log(`starting request for`, operation)
-  return forward(operation).map(data => {
-    console.log(`ending request for`, operation)
-    return data
-  })
-})
-
-const reportErrors = (errorCallback: any) =>
-  new ApolloLink((operation, forward) => {
-    const observer = forward(operation)
-    observer.subscribe({ error: errorCallback })
-    return forward(operation)
-  })
-
-// const uri = 'https://graphql.anilist.co/graphql'
-const uri = 'http://localhost:8080/graphql'
-
-const batchLink = () => {
-  return new BatchHttpLink({
-    uri,
-    fetch: async (url, options) => {
-      console.log('BatchHttpLink', options)
-
-      if (options) {
-        options.credentials = 'same-origin'
-      }
-      return fetch(url, options)
-    }
-  })
-}
-
 const isBatchLink = false
-
-const httpLink = () => {
-  return new HttpLink({
-    uri,
-    fetch: async (uri, options) => {
-      console.log('httpLink', options)
-      return fetch(uri, options)
-    }
-  })
-}
 
 const client = new ApolloClient({
   link: ApolloLink.from([
     errorLink,
     myLink,
-    reportErrors(() => console.log('reportErrors')),
+    reportErrors(() => console.log('reportErrors cb')),
     isBatchLink ? batchLink() : httpLink()
   ]),
-  cache: new InMemoryCache()
+  cache: new InMemoryCache({
+    dataIdFromObject: (result: any) => {
+      if (result.__typename) {
+        if (result.id !== undefined) {
+          return `${result.__typename}:${result.id}`
+        }
+        if (result._id !== undefined) {
+          return `${result.__typename}:${result._id}`
+        }
+        if (result.Id !== undefined) {
+          return `${result.__typename}:${result.Id}`
+        }
+      }
+      return null
+    }
+  }).restore((window as any).__APOLLO_STATE__) as any,
+  connectToDevTools: !process.env.prodaction
 })
 
 export default function View() {
+  const [directorId, setDirectorId] = React.useState(1)
+  const [count, setCount] = React.useState(1)
   const { data, loading, error, refetch } = useFetchDirectorWithIdQuery({
     variables: {
-      id: 12
+      id: directorId
     }
   })
 
@@ -126,41 +92,126 @@ export default function View() {
 
   const director = data?.authorized?.director
 
-  console.log(director)
-
   return (
     <>
-      <button onClick={() => refetch()}>refetch</button>
-      <h1>Current Director</h1>
-      <h3>directorId - {director?.directorId}</h3>
-      <h3>name - {director?.name}</h3>
-      <h3>age -{director?.age}</h3>
+      <button onClick={() => refetch()}>refetch {count}</button>
+      <button onClick={() => setCount(prev => prev + 1)}>
+        setCount {count}
+      </button>
+      <input
+        type="number"
+        value={directorId}
+        onChange={({ target }) => setDirectorId(Number(target.value))}
+        min={0}
+      />
 
-      <Movies movies={director?.movies} />
+      <div className="director-wrapper">
+        <h1>Current Director</h1>
+        <h3>directorId - {director?.directorId}</h3>
+        <h3>name - {director?.name}</h3>
+        <h3>age -{director?.age}</h3>
+      </div>
+
+      <Movies movies={director?.movies} directorId={directorId} />
     </>
   )
 }
 
 function Movies({
-  movies
+  movies,
+  directorId
 }: {
-  movies?: Array<
-    { __typename?: 'Movie' } & Pick<
-      Movie,
-      'title' | 'description' | 'year' | 'directorId' | 'likes'
-    >
-  >
+  movies?: Array<Movie>
+  directorId: number
 }) {
+  const [toggleLike] = useToggleLikeMutation()
+
   return (
     <div>
-      <h2>Movies</h2>
+      <h2>Movies (count: {movies?.length})</h2>
       {(movies || []).map(item => (
-        <div key={item.title}>
-          <h3>{item.title}</h3>
-          <p>{item.description}</p>
-          <button>likes: {item.likes}</button>
-        </div>
+        <MovieItem
+          key={item.id}
+          item={item}
+          toggleLike={toggleLike}
+          directorId={directorId}
+        />
       ))}
+    </div>
+  )
+}
+
+function MovieItem({
+  item,
+  toggleLike,
+  directorId
+}: {
+  item: Movie
+  toggleLike: MutationFunction<ToggleLikeMutation, ToggleLikeMutationVariables>
+  directorId: number
+}) {
+  const [isLoading, setLoading] = useState(false)
+
+  // Можно выносить, можно делать рефеч запроса
+  const mutation = async () => {
+    setLoading(true)
+
+    try {
+      await toggleLike({
+        variables: {
+          id: item.id
+        },
+        update: function(proxy, fetchResult) {
+          const result = fetchResult.data?.authorized?.toggleLike.id
+
+          const data = proxy.readQuery<FetchDirectorWithIdQuery>({
+            query: GET_DIRECTORS,
+            variables: {
+              id: directorId
+            }
+          })
+
+          if (!data || !data.authorized) {
+            return
+          }
+
+          proxy.writeQuery({
+            query: GET_DIRECTORS,
+            variables: {
+              id: directorId
+            },
+            data: {
+              ...data,
+              authorized: {
+                ...data.authorized,
+                director: {
+                  ...data.authorized.director,
+                  movies: data.authorized.director.movies.map(movie =>
+                    movie.id === result
+                      ? { ...movie, likes: movie.likes + 1 }
+                      : movie
+                  )
+                }
+              }
+            }
+          })
+        }
+      })
+    } catch {
+      setLoading(false)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="movie-item">
+      <h3>{item.id}</h3>
+      <h3>{item.title}</h3>
+      <p>{item.description}</p>
+      <button disabled={isLoading} onClick={mutation}>
+        likes: {item.likes}
+      </button>
     </div>
   )
 }

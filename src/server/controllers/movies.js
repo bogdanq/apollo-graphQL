@@ -1,4 +1,5 @@
 const { MoviesModel } = require('../models/movies')
+const { DirectorsModel } = require('../models/directors')
 
 const getMovieAndUpdate = async (id, field = '_id') => {
   try {

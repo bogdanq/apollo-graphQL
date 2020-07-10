@@ -2,3 +2,14 @@
   font-family: sans-serif;
   text-align: center;
 }
+
+.director-wrapper,
+.movie-item {
+  border: 1px solid rgb(142, 146, 144);
+  padding: 15px;
+  border-radius: 15px;
+}
+
+.movie-item {
+  margin-top: 20px;
+}
