@@ -4,7 +4,8 @@ const {
   getMovieAndUpdate,
   getDirectorById,
   getDirectors,
-  getMoviesById
+  getMoviesById,
+  removeMovieById
 } = require('../controllers')
 
 const authorizedResolvers = {
@@ -36,12 +37,23 @@ const authorizedResolvers = {
 
       const updatedLike = {
         id: findedMovie._id,
-        likes: findedMovie.likes + 1
+        likes: findedMovie.likes + 1,
+        directorId: findedMovie.directorId
       }
 
       pubSub.publish('LIKE_TOGGLE', updatedLike)
 
       return updatedLike
+    },
+
+    removeMovie: async (root, { id }, { pubSub }) => {
+      const deletedMovie = await removeMovieById(id)
+
+      const result = { id, directorId: deletedMovie.directorId }
+
+      pubSub.publish('REMOVE_MOVIE', result)
+
+      return result
     }
   },
   AuthorizedQuery: {

@@ -1,5 +1,4 @@
 const { MoviesModel } = require('../models/movies')
-const { DirectorsModel } = require('../models/directors')
 
 const getMovieAndUpdate = async (id, field = '_id') => {
   try {
@@ -46,4 +45,22 @@ const getMovies = async () => {
   }
 }
 
-module.exports = { getMovieAndUpdate, getMovieById, getMovies, getMoviesById }
+const removeMovieById = async _id => {
+  try {
+    const movie = await getMovieById(_id)
+
+    await MoviesModel.deleteOne({ _id })
+
+    return movie
+  } catch (e) {
+    throw Error(`При удалении movie ${_id} произошла ошибка`)
+  }
+}
+
+module.exports = {
+  getMovieAndUpdate,
+  getMovieById,
+  getMovies,
+  getMoviesById,
+  removeMovieById
+}

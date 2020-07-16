@@ -1,6 +1,6 @@
 import React from 'react'
 import { ApolloClient } from 'apollo-client'
-import { ApolloLink } from 'apollo-link'
+import { split, ApolloLink } from 'apollo-link'
 import { ApolloProvider } from 'react-apollo'
 import { WebSocketLink } from 'apollo-link-ws'
 import { InMemoryCache } from 'apollo-cache-inmemory'
@@ -12,10 +12,11 @@ import {
   batchLink,
   httpLink,
   myLink,
-  reportErrors,
+  // reportErrors,
   errorLink
 } from './apollo-links'
 import './styles.css'
+import { getMainDefinition } from 'apollo-utilities'
 
 // Запрос через graphql сразу
 const query = `{ 
@@ -35,13 +36,25 @@ graphql(codeFirstSchema as any, query)
 
 const isBatchLink = false
 
+const terminatingLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query)
+
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    )
+  },
+  wsLink as any,
+  isBatchLink ? batchLink() : httpLink()
+)
+
 const client = new ApolloClient({
   link: ApolloLink.from([
-    wsLink as any,
-    errorLink,
+    // reportErrors(() => console.log('error with report')),
     myLink,
-    reportErrors(() => console.log('reportErrors cb')),
-    isBatchLink ? batchLink() : httpLink()
+    errorLink,
+    terminatingLink
   ]),
   cache: new InMemoryCache({
     dataIdFromObject: (result: any) => {
@@ -64,7 +77,6 @@ const client = new ApolloClient({
 
 export default function View() {
   const [directorId, setDirectorId] = React.useState(1)
-  const [count, setCount] = React.useState(1)
 
   const { data, loading, error, refetch } = useFetchDirectorWithIdQuery({
     variables: {
@@ -79,10 +91,7 @@ export default function View() {
 
   return (
     <>
-      <button onClick={() => refetch()}>refetch {count}</button>
-      <button onClick={() => setCount(prev => prev + 1)}>
-        setCount {count}
-      </button>
+      <button onClick={() => refetch()}>refetch</button>
       <input
         type="number"
         value={directorId}
@@ -97,7 +106,7 @@ export default function View() {
         <h3>age -{director?.age}</h3>
       </div>
 
-      <Movies movies={director?.movies} directorId={directorId} />
+      <Movies movies={director?.movies} />
     </>
   )
 }

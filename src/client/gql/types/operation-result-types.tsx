@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
-import * as React from 'react'
 import * as ApolloReactCommon from '@apollo/react-common'
+import * as React from 'react'
 import * as ApolloReactComponents from '@apollo/react-components'
 import * as ApolloReactHooks from '@apollo/react-hooks'
 export type Maybe<T> = T | null
@@ -28,6 +28,7 @@ export type AuthorizedMutation = {
   __typename?: 'AuthorizedMutation'
   nope?: Maybe<Scalars['Int']>
   toggleLike: Like
+  removeMovie: RemovedMovieResponse
 }
 
 export type AuthorizedMutationNopeArgs = {
@@ -35,6 +36,10 @@ export type AuthorizedMutationNopeArgs = {
 }
 
 export type AuthorizedMutationToggleLikeArgs = {
+  id: Scalars['String']
+}
+
+export type AuthorizedMutationRemoveMovieArgs = {
   id: Scalars['String']
 }
 
@@ -83,6 +88,7 @@ export type Like = {
   __typename?: 'Like'
   id: Scalars['String']
   likes: Scalars['Int']
+  directorId: Scalars['String']
 }
 
 export type Movie = {
@@ -107,15 +113,43 @@ export type Query = {
   administrator?: Maybe<AdministratorQuery>
 }
 
-export type Subscription = {
-  __typename?: 'Subscription'
-  LikeToggled?: Maybe<Like>
+export type RemovedMovieResponse = {
+  __typename?: 'RemovedMovieResponse'
+  id: Scalars['String']
+  directorId: Scalars['String']
 }
 
-export type LikeSubscriptionVariables = {}
+export type Subscription = {
+  __typename?: 'Subscription'
+  LikeToggled: Like
+  removedMovie: RemovedMovieResponse
+}
 
-export type LikeSubscription = { __typename?: 'Subscription' } & {
-  LikeToggled: Maybe<{ __typename?: 'Like' } & Pick<Like, 'id' | 'likes'>>
+export type RemoveMovieMutationVariables = {
+  id: Scalars['String']
+}
+
+export type RemoveMovieMutation = { __typename?: 'Mutation' } & {
+  authorized: Maybe<
+    { __typename?: 'AuthorizedMutation' } & {
+      removeMovie: { __typename?: 'RemovedMovieResponse' } & Pick<
+        RemovedMovieResponse,
+        'id' | 'directorId'
+      >
+    }
+  >
+}
+
+export type ToggleLikeMutationVariables = {
+  id: Scalars['String']
+}
+
+export type ToggleLikeMutation = { __typename?: 'Mutation' } & {
+  authorized: Maybe<
+    { __typename?: 'AuthorizedMutation' } & {
+      toggleLike: { __typename?: 'Like' } & Pick<Like, 'id' | 'likes'>
+    }
+  >
 }
 
 export type FetchDirectorWithIdQueryVariables = {
@@ -140,73 +174,163 @@ export type FetchDirectorWithIdQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type ToggleLikeMutationVariables = {
-  id: Scalars['String']
-}
+export type LikeSubscriptionVariables = {}
 
-export type ToggleLikeMutation = { __typename?: 'Mutation' } & {
-  authorized: Maybe<
-    { __typename?: 'AuthorizedMutation' } & {
-      toggleLike: { __typename?: 'Like' } & Pick<Like, 'id' | 'likes'>
-    }
+export type LikeSubscription = { __typename?: 'Subscription' } & {
+  LikeToggled: { __typename?: 'Like' } & Pick<
+    Like,
+    'id' | 'likes' | 'directorId'
   >
 }
 
-export const LikeDocument = gql`
-  subscription Like {
-    LikeToggled {
-      id
-      likes
+export type RemovedMovieSubscriptionVariables = {}
+
+export type RemovedMovieSubscription = { __typename?: 'Subscription' } & {
+  removedMovie: { __typename?: 'RemovedMovieResponse' } & Pick<
+    RemovedMovieResponse,
+    'id' | 'directorId'
+  >
+}
+
+export const RemoveMovieDocument = gql`
+  mutation RemoveMovie($id: String!) {
+    authorized {
+      removeMovie(id: $id) {
+        id
+        directorId
+      }
     }
   }
 `
-export type LikeComponentProps = Omit<
-  ApolloReactComponents.SubscriptionComponentOptions<
-    LikeSubscription,
-    LikeSubscriptionVariables
+export type RemoveMovieMutationFn = ApolloReactCommon.MutationFunction<
+  RemoveMovieMutation,
+  RemoveMovieMutationVariables
+>
+export type RemoveMovieComponentProps = Omit<
+  ApolloReactComponents.MutationComponentOptions<
+    RemoveMovieMutation,
+    RemoveMovieMutationVariables
   >,
-  'subscription'
+  'mutation'
 >
 
-export const LikeComponent = (props: LikeComponentProps) => (
-  <ApolloReactComponents.Subscription<
-    LikeSubscription,
-    LikeSubscriptionVariables
+export const RemoveMovieComponent = (props: RemoveMovieComponentProps) => (
+  <ApolloReactComponents.Mutation<
+    RemoveMovieMutation,
+    RemoveMovieMutationVariables
   >
-    subscription={LikeDocument}
+    mutation={RemoveMovieDocument}
     {...props}
   />
 )
 
 /**
- * __useLikeSubscription__
+ * __useRemoveMovieMutation__
  *
- * To run a query within a React component, call `useLikeSubscription` and pass it any options that fit your needs.
- * When your component renders, `useLikeSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useRemoveMovieMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveMovieMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useLikeSubscription({
+ * const [removeMovieMutation, { data, loading, error }] = useRemoveMovieMutation({
  *   variables: {
+ *      id: // value for 'id'
  *   },
  * });
  */
-export function useLikeSubscription(
-  baseOptions?: ApolloReactHooks.SubscriptionHookOptions<
-    LikeSubscription,
-    LikeSubscriptionVariables
+export function useRemoveMovieMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RemoveMovieMutation,
+    RemoveMovieMutationVariables
   >
 ) {
-  return ApolloReactHooks.useSubscription<
-    LikeSubscription,
-    LikeSubscriptionVariables
-  >(LikeDocument, baseOptions)
+  return ApolloReactHooks.useMutation<
+    RemoveMovieMutation,
+    RemoveMovieMutationVariables
+  >(RemoveMovieDocument, baseOptions)
 }
-export type LikeSubscriptionHookResult = ReturnType<typeof useLikeSubscription>
-export type LikeSubscriptionResult = ApolloReactCommon.SubscriptionResult<
-  LikeSubscription
+export type RemoveMovieMutationHookResult = ReturnType<
+  typeof useRemoveMovieMutation
+>
+export type RemoveMovieMutationResult = ApolloReactCommon.MutationResult<
+  RemoveMovieMutation
+>
+export type RemoveMovieMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  RemoveMovieMutation,
+  RemoveMovieMutationVariables
+>
+export const ToggleLikeDocument = gql`
+  mutation ToggleLike($id: String!) {
+    authorized {
+      toggleLike(id: $id) {
+        id
+        likes
+      }
+    }
+  }
+`
+export type ToggleLikeMutationFn = ApolloReactCommon.MutationFunction<
+  ToggleLikeMutation,
+  ToggleLikeMutationVariables
+>
+export type ToggleLikeComponentProps = Omit<
+  ApolloReactComponents.MutationComponentOptions<
+    ToggleLikeMutation,
+    ToggleLikeMutationVariables
+  >,
+  'mutation'
+>
+
+export const ToggleLikeComponent = (props: ToggleLikeComponentProps) => (
+  <ApolloReactComponents.Mutation<
+    ToggleLikeMutation,
+    ToggleLikeMutationVariables
+  >
+    mutation={ToggleLikeDocument}
+    {...props}
+  />
+)
+
+/**
+ * __useToggleLikeMutation__
+ *
+ * To run a mutation, you first call `useToggleLikeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleLikeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleLikeMutation, { data, loading, error }] = useToggleLikeMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useToggleLikeMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ToggleLikeMutation,
+    ToggleLikeMutationVariables
+  >
+) {
+  return ApolloReactHooks.useMutation<
+    ToggleLikeMutation,
+    ToggleLikeMutationVariables
+  >(ToggleLikeDocument, baseOptions)
+}
+export type ToggleLikeMutationHookResult = ReturnType<
+  typeof useToggleLikeMutation
+>
+export type ToggleLikeMutationResult = ApolloReactCommon.MutationResult<
+  ToggleLikeMutation
+>
+export type ToggleLikeMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  ToggleLikeMutation,
+  ToggleLikeMutationVariables
 >
 export const FetchDirectorWithIdDocument = gql`
   query fetchDirectorWithID($id: Int!) {
@@ -299,73 +423,118 @@ export type FetchDirectorWithIdQueryResult = ApolloReactCommon.QueryResult<
   FetchDirectorWithIdQuery,
   FetchDirectorWithIdQueryVariables
 >
-export const ToggleLikeDocument = gql`
-  mutation ToggleLike($id: String!) {
-    authorized {
-      toggleLike(id: $id) {
-        id
-        likes
-      }
+export const LikeDocument = gql`
+  subscription Like {
+    LikeToggled {
+      id
+      likes
+      directorId
     }
   }
 `
-export type ToggleLikeMutationFn = ApolloReactCommon.MutationFunction<
-  ToggleLikeMutation,
-  ToggleLikeMutationVariables
->
-export type ToggleLikeComponentProps = Omit<
-  ApolloReactComponents.MutationComponentOptions<
-    ToggleLikeMutation,
-    ToggleLikeMutationVariables
+export type LikeComponentProps = Omit<
+  ApolloReactComponents.SubscriptionComponentOptions<
+    LikeSubscription,
+    LikeSubscriptionVariables
   >,
-  'mutation'
+  'subscription'
 >
 
-export const ToggleLikeComponent = (props: ToggleLikeComponentProps) => (
-  <ApolloReactComponents.Mutation<
-    ToggleLikeMutation,
-    ToggleLikeMutationVariables
+export const LikeComponent = (props: LikeComponentProps) => (
+  <ApolloReactComponents.Subscription<
+    LikeSubscription,
+    LikeSubscriptionVariables
   >
-    mutation={ToggleLikeDocument}
+    subscription={LikeDocument}
     {...props}
   />
 )
 
 /**
- * __useToggleLikeMutation__
+ * __useLikeSubscription__
  *
- * To run a mutation, you first call `useToggleLikeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useToggleLikeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
+ * To run a query within a React component, call `useLikeSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useLikeSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const [toggleLikeMutation, { data, loading, error }] = useToggleLikeMutation({
+ * const { data, loading, error } = useLikeSubscription({
  *   variables: {
- *      id: // value for 'id'
  *   },
  * });
  */
-export function useToggleLikeMutation(
-  baseOptions?: ApolloReactHooks.MutationHookOptions<
-    ToggleLikeMutation,
-    ToggleLikeMutationVariables
+export function useLikeSubscription(
+  baseOptions?: ApolloReactHooks.SubscriptionHookOptions<
+    LikeSubscription,
+    LikeSubscriptionVariables
   >
 ) {
-  return ApolloReactHooks.useMutation<
-    ToggleLikeMutation,
-    ToggleLikeMutationVariables
-  >(ToggleLikeDocument, baseOptions)
+  return ApolloReactHooks.useSubscription<
+    LikeSubscription,
+    LikeSubscriptionVariables
+  >(LikeDocument, baseOptions)
 }
-export type ToggleLikeMutationHookResult = ReturnType<
-  typeof useToggleLikeMutation
+export type LikeSubscriptionHookResult = ReturnType<typeof useLikeSubscription>
+export type LikeSubscriptionResult = ApolloReactCommon.SubscriptionResult<
+  LikeSubscription
 >
-export type ToggleLikeMutationResult = ApolloReactCommon.MutationResult<
-  ToggleLikeMutation
+export const RemovedMovieDocument = gql`
+  subscription RemovedMovie {
+    removedMovie {
+      id
+      directorId
+    }
+  }
+`
+export type RemovedMovieComponentProps = Omit<
+  ApolloReactComponents.SubscriptionComponentOptions<
+    RemovedMovieSubscription,
+    RemovedMovieSubscriptionVariables
+  >,
+  'subscription'
 >
-export type ToggleLikeMutationOptions = ApolloReactCommon.BaseMutationOptions<
-  ToggleLikeMutation,
-  ToggleLikeMutationVariables
+
+export const RemovedMovieComponent = (props: RemovedMovieComponentProps) => (
+  <ApolloReactComponents.Subscription<
+    RemovedMovieSubscription,
+    RemovedMovieSubscriptionVariables
+  >
+    subscription={RemovedMovieDocument}
+    {...props}
+  />
+)
+
+/**
+ * __useRemovedMovieSubscription__
+ *
+ * To run a query within a React component, call `useRemovedMovieSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useRemovedMovieSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRemovedMovieSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useRemovedMovieSubscription(
+  baseOptions?: ApolloReactHooks.SubscriptionHookOptions<
+    RemovedMovieSubscription,
+    RemovedMovieSubscriptionVariables
+  >
+) {
+  return ApolloReactHooks.useSubscription<
+    RemovedMovieSubscription,
+    RemovedMovieSubscriptionVariables
+  >(RemovedMovieDocument, baseOptions)
+}
+export type RemovedMovieSubscriptionHookResult = ReturnType<
+  typeof useRemovedMovieSubscription
+>
+export type RemovedMovieSubscriptionResult = ApolloReactCommon.SubscriptionResult<
+  RemovedMovieSubscription
 >

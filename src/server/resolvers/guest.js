@@ -6,6 +6,7 @@ const guestResolvers = {
     // резолв корневых запросов
     guest: () => ({})
   },
+
   Subscription: {
     // резолв подписок с авторизацией
     LikeToggled: {
@@ -15,6 +16,10 @@ const guestResolvers = {
       subscribe: (_, __, { pubSub }) => {
         return pubSub.asyncIterator('LIKE_TOGGLE')
       }
+    },
+    removedMovie: {
+      resolve: root => root,
+      subscribe: (_, __, { pubSub }) => pubSub.asyncIterator('REMOVE_MOVIE')
     }
   },
 

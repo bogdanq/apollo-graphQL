@@ -1,8 +1,8 @@
-import { HttpLink } from 'apollo-link-http'
+import { createHttpLink } from 'apollo-link-http'
 import { URI } from '.'
 
 export const httpLink = () => {
-  return new HttpLink({
+  return createHttpLink({
     uri: URI,
     fetch: async (uri, options) => {
       console.log('httpLink', options)

@@ -1,0 +1,6 @@
+subscription RemovedMovie {
+  removedMovie {
+    id
+    directorId
+  }
+}

@@ -8,6 +8,7 @@ const authSchema = gql`
 
   extend type AuthorizedMutation {
     toggleLike(id: String!): Like!
+    removeMovie(id: String!): RemovedMovieResponse!
   }
 
   type Movie {

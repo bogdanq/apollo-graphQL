@@ -17,6 +17,7 @@ const rootSchema = gql`
 
   type Subscription {
     LikeToggled: Like!
+    removedMovie: RemovedMovieResponse!
   }
 
   type Query {
@@ -48,6 +49,12 @@ const rootSchema = gql`
   type Like {
     id: String!
     likes: Int!
+    directorId: String!
+  }
+
+  type RemovedMovieResponse {
+    id: String!
+    directorId: String!
   }
 `
 

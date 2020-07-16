@@ -1,0 +1,8 @@
+mutation RemoveMovie($id: String!) {
+  authorized {
+    removeMovie(id: $id) {
+      id
+      directorId
+    }
+  }
+}
