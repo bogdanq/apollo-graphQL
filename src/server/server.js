@@ -1,6 +1,8 @@
 require('dotenv').config()
 
 const { ApolloServer, makeExecutableSchema, PubSub } = require('apollo-server')
+const mongoose = require('mongoose')
+const merge = require('lodash/merge')
 const {
   rootSchema,
   adminSchema,
@@ -12,8 +14,7 @@ const {
   authorizedResolvers,
   adminResolvers
 } = require('./resolvers')
-const mongoose = require('mongoose')
-const merge = require('lodash/merge')
+const { moviesDataLoader } = require('./data-loaders/movies')
 
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -70,7 +71,10 @@ async function getContextFromRequest({ req, connection }) {
     session: { ...user },
     hasRole: hasRole(user),
     pubSub,
-    connection
+    connection,
+    loaders: {
+      moviesDataLoader: moviesDataLoader()
+    }
   }
 }
 

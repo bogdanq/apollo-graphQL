@@ -37,6 +37,14 @@ const getMoviesById = async (id, field = '_id') => {
   }
 }
 
+const getMoviesByIds = async ids => {
+  try {
+    return await MoviesModel.find({ directorId: { $in: ids } })
+  } catch (e) {
+    throw Error(`При получении movies by ids произошла ошибка`)
+  }
+}
+
 const getMovies = async () => {
   try {
     return await MoviesModel.find()
@@ -62,5 +70,6 @@ module.exports = {
   getMovieById,
   getMovies,
   getMoviesById,
-  removeMovieById
+  removeMovieById,
+  getMoviesByIds
 }

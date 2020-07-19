@@ -4,7 +4,6 @@ const {
   getMovieAndUpdate,
   getDirectorById,
   getDirectors,
-  getMoviesById,
   removeMovieById
 } = require('../controllers')
 
@@ -69,8 +68,8 @@ const authorizedResolvers = {
   // в code first резолвер указывается в типе
   // в схеме его нужно указать в нужном типе
   Director: {
-    movies: ({ directorId }, args, ctx) => {
-      return getMoviesById(directorId, 'directorId')
+    movies: ({ directorId }, args, { loaders }) => {
+      return loaders.moviesDataLoader.load(directorId)
     },
     getInformation: () => {
       return 'getInformation in Director'
