@@ -5,19 +5,19 @@ hooks:
     # - eslint --fix
 generates:
   # Генерация свагер типов <https://graphql-code-generator.com/docs/getting-started/codegen-config>
-  ./src/server/swagger-types/partner.d.ts: # Путь для генерации файла с типами
-    schema: # Путь к схеме
-      - https://anilist.co/graphql
-      # - http://localhost:8080/graphql
-    plugins: # набор плагинов
-      - typescript
-      - typescript-operations
+  # ./src/server/swagger-types: # Путь для генерации файла с типами
+  #   schema: # Путь к схеме
+  #     # - https://anilist.co/graphql
+  #     - http://localhost:8090/graphql
+  #   plugins: # набор плагинов
+  #     - typescript
+  #     - typescript-operations
   # Генерация типов для клиента
   ./src/client/gql/types/operation-result-types.tsx: # Путь для генерации файла с типами
     schema: # Путь к схеме на сервере
       # - ./src/server/schema/graph-schema/**/*.*
       # - ./src/server/schema/parser-schema/parser-schema.ts
-      - http://localhost:8080/graphql
+      - http://localhost:8090/graphql
       # - https://anilist.co/graphql
     documents: ./src/client/**/*.* # Путь к файлам gql и так же смотрит запросы в других файлах <https://graphql-code-generator.com/docs/getting-started/documents-field#available-formats>
     plugins: # набор плагинов

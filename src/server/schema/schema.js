@@ -13,10 +13,11 @@ const rootSchema = gql`
 
   type Mutation {
     authorized: AuthorizedMutation
+    administrator: AdministratorMutation
   }
 
   type Subscription {
-    LikeToggled: Like!
+    likeToggled: Like!
     removedMovie: RemovedMovieResponse!
   }
 
@@ -28,6 +29,11 @@ const rootSchema = gql`
 
   # Запросы для админа
   type AdministratorQuery {
+    nope(nope: Int!): Int
+  }
+
+  # Мутации для админа
+  type AdministratorMutation {
     nope(nope: Int!): Int
   }
 

@@ -5,7 +5,7 @@ export * from './http-link'
 export * from './my-link-example'
 
 // const uri = 'https://graphql.anilist.co/graphql'
-export const URI = 'http://localhost:8080/graphql'
+export const URI = 'http://localhost:8090/graphql'
 
 // const authLink = new ApolloLink((operation, forward) => {
 //   // const token = false

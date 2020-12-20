@@ -1,5 +1,5 @@
 subscription Like {
-  LikeToggled {
+  likeToggled {
     id
     likes
     directorId

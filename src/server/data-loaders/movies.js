@@ -1,17 +1,16 @@
 const DataLoader = require('dataloader')
-const { groupBy, map } = require('ramda')
+const { groupBy } = require('ramda')
+const { rocketPipe: p } = require('rocket-pipes')
 const { getMoviesByIds } = require('../controllers')
 
-function moviesDataLoader() {
-  return new DataLoader(moviesByDirectorIds)
+function directorMoviesByIdDataLoader() {
+  return new DataLoader((directorIds) =>
+    p(
+      () => getMoviesByIds(directorIds),
+      (movies) => groupBy((movie) => movie.directorId, movies),
+      (groupedById) => directorIds.map((movieId) => groupedById[movieId])
+    )()
+  )
 }
 
-async function moviesByDirectorIds(directorIds) {
-  const movies = await getMoviesByIds(directorIds)
-
-  const groupedById = groupBy(movie => movie.directorId, movies)
-
-  return map(movieId => groupedById[movieId], directorIds)
-}
-
-module.exports = { moviesDataLoader }
+module.exports = { directorMoviesByIdDataLoader }

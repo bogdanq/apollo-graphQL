@@ -11,6 +11,16 @@ const adminResolvers = {
     }
   },
 
+  Mutation: {
+    administrator: (parent, args, { hasRole }) => {
+      if (hasRole('ADMIN')) {
+        return {}
+      }
+
+      throw Error('Нет прав!')
+    }
+  },
+
   AdministratorQuery: {
     getUserInfoWithID: () => {
       return 'getUserInfoWithID success'

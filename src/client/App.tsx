@@ -19,20 +19,20 @@ import './styles.css'
 import { getMainDefinition } from 'apollo-utilities'
 
 // Запрос через graphql сразу
-const query = `{ 
+const query = `{
   hello
 }`
 
 const wsLink = new WebSocketLink({
-  uri: `ws://localhost:8080/graphql`,
+  uri: `ws://localhost:8090/graphql`,
   options: {
     reconnect: true
   }
 })
 
 graphql(codeFirstSchema as any, query)
-  .then(res => console.log('responce with query', res))
-  .catch(e => console.log('graphql e', e))
+  .then((res) => console.log('responce with query', res))
+  .catch((e) => console.log('graphql e', e))
 
 const isBatchLink = false
 
@@ -112,7 +112,7 @@ export default function View() {
 }
 
 export const App = () => {
-  const [state, setState] = React.useReducer(prev => !prev, true)
+  const [state, setState] = React.useReducer((prev) => !prev, true)
 
   return (
     <ApolloProvider client={client}>

@@ -1,3 +1,4 @@
+const { rocketPipe: p } = require('rocket-pipes')
 const { MoviesModel } = require('../models/movies')
 
 const getMovieAndUpdate = async (id, field = '_id') => {
@@ -37,7 +38,7 @@ const getMoviesById = async (id, field = '_id') => {
   }
 }
 
-const getMoviesByIds = async ids => {
+const getMoviesByIds = async (ids) => {
   try {
     return await MoviesModel.find({ directorId: { $in: ids } })
   } catch (e) {
@@ -53,7 +54,7 @@ const getMovies = async () => {
   }
 }
 
-const removeMovieById = async _id => {
+const removeMovieById = async (_id) => {
   try {
     const movie = await getMovieById(_id)
 
@@ -65,11 +66,53 @@ const removeMovieById = async _id => {
   }
 }
 
+const notifyFindedMovie = (findedMovie, pubSub) => {
+  const updatedMovie = {
+    id: findedMovie._id,
+    likes: findedMovie.likes + 1,
+    directorId: findedMovie.directorId
+  }
+
+  pubSub.publish('LIKE_TOGGLE', updatedMovie)
+
+  return updatedMovie
+}
+
+const toggleMovieLike = async (movieId, pubSub) => {
+  return p(
+    () => getMovieAndUpdate(movieId),
+    (findedMovie) => notifyFindedMovie(findedMovie, pubSub)
+  )()
+}
+
+const notifyRemovedMovie = (findedMovie, pubSub) => {
+  const deletedMovie = {
+    id: findedMovie._id,
+    likes: findedMovie.likes + 1,
+    directorId: findedMovie.directorId
+  }
+
+  const result = { id: deletedMovie.id, directorId: deletedMovie.directorId }
+
+  pubSub.publish('REMOVE_MOVIE', result)
+
+  return deletedMovie
+}
+
+const removeMovie = async (movieId, pubSub) => {
+  return p(
+    () => removeMovieById(movieId),
+    (findedMovie) => notifyRemovedMovie(findedMovie, pubSub)
+  )()
+}
+
 module.exports = {
   getMovieAndUpdate,
   getMovieById,
   getMovies,
   getMoviesById,
   removeMovieById,
-  getMoviesByIds
+  getMoviesByIds,
+  toggleMovieLike,
+  removeMovie
 }

@@ -7,22 +7,6 @@ const guestResolvers = {
     guest: () => ({})
   },
 
-  Subscription: {
-    // резолв подписок с авторизацией
-    LikeToggled: {
-      resolve: (source, args) => {
-        return source
-      },
-      subscribe: (_, __, { pubSub }) => {
-        return pubSub.asyncIterator('LIKE_TOGGLE')
-      }
-    },
-    removedMovie: {
-      resolve: root => root,
-      subscribe: (_, __, { pubSub }) => pubSub.asyncIterator('REMOVE_MOVIE')
-    }
-  },
-
   GuestQuery: {
     movie: (parent, { id }, ctx) => {
       return getMovieById(id)

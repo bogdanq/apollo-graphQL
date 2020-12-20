@@ -24,8 +24,8 @@ function updateLikeWithSubscribe(
   subscriptionData: SubscriptionResult<LikeSubscription>,
   client: ApolloClient<object>
 ) {
-  const id = subscriptionData.data?.LikeToggled?.id
-  const directorId = Number(subscriptionData.data?.LikeToggled?.directorId)
+  const id = subscriptionData.data?.likeToggled?.id
+  const directorId = Number(subscriptionData.data?.likeToggled?.directorId)
 
   if (!id || !directorId) {
     return
@@ -53,7 +53,7 @@ function updateLikeWithSubscribe(
         ...data.authorized,
         director: {
           ...data.authorized.director,
-          movies: data.authorized.director.movies.map(movie =>
+          movies: data.authorized.director.movies.map((movie) =>
             movie.id === id ? { ...movie, likes: movie.likes + 1 } : movie
           )
         }

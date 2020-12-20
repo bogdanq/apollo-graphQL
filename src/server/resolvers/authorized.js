@@ -1,10 +1,10 @@
 // const { withFilter } = require('apollo-server')
 
 const {
-  getMovieAndUpdate,
   getDirectorById,
   getDirectors,
-  removeMovieById
+  removeMovie,
+  toggleMovieLike
 } = require('../controllers')
 
 const authorizedResolvers = {
@@ -32,27 +32,11 @@ const authorizedResolvers = {
 
   AuthorizedMutation: {
     toggleLike: async (parent, { id }, { pubSub }) => {
-      const findedMovie = await getMovieAndUpdate(id)
-
-      const updatedLike = {
-        id: findedMovie._id,
-        likes: findedMovie.likes + 1,
-        directorId: findedMovie.directorId
-      }
-
-      pubSub.publish('LIKE_TOGGLE', updatedLike)
-
-      return updatedLike
+      return toggleMovieLike(id, pubSub)
     },
 
-    removeMovie: async (root, { id }, { pubSub }) => {
-      const deletedMovie = await removeMovieById(id)
-
-      const result = { id, directorId: deletedMovie.directorId }
-
-      pubSub.publish('REMOVE_MOVIE', result)
-
-      return result
+    removeMovie: async (parent, { id }, { pubSub }) => {
+      return removeMovie(id, pubSub)
     }
   },
   AuthorizedQuery: {
@@ -69,7 +53,7 @@ const authorizedResolvers = {
   // в схеме его нужно указать в нужном типе
   Director: {
     movies: ({ directorId }, args, { loaders }) => {
-      return loaders.moviesDataLoader.load(directorId)
+      return loaders.directorMoviesByIdDataLoader.load(directorId)
     },
     getInformation: () => {
       return 'getInformation in Director'

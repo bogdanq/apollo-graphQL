@@ -12,24 +12,26 @@ const {
 const {
   guestResolvers,
   authorizedResolvers,
-  adminResolvers
+  adminResolvers,
+  subscriptionsResolvers
 } = require('./resolvers')
-const { moviesDataLoader } = require('./data-loaders/movies')
+const { directorMoviesByIdDataLoader } = require('./data-loaders/movies')
 
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
-  .then(mongodb => mongodb)
-  .catch(err => err)
+  .then((mongodb) => mongodb)
+  .catch((err) => err)
 
 const pubSub = new PubSub()
 
 const resolversMerged = merge(
   guestResolvers,
   authorizedResolvers,
-  adminResolvers
+  adminResolvers,
+  subscriptionsResolvers
 )
 
 const schema = makeExecutableSchema({
@@ -44,11 +46,11 @@ const server = new ApolloServer({
   playground: true
 })
 
-server.listen({ port: 8080 }, () =>
-  console.log(`🚀 Server ready at http://localhost:8080${server.graphqlPath}`)
+server.listen({ port: 8090 }, () =>
+  console.log(`🚀 Server ready at http://localhost:8090${server.graphqlPath}`)
 )
 
-const hasRole = user => role => {
+const hasRole = (user) => (role) => {
   // Примитивный поиск по ролям
   if (user && Array.isArray(user.roles)) {
     return user.roles.includes(role)
@@ -73,7 +75,7 @@ async function getContextFromRequest({ req, connection }) {
     pubSub,
     connection,
     loaders: {
-      moviesDataLoader: moviesDataLoader()
+      directorMoviesByIdDataLoader: directorMoviesByIdDataLoader()
     }
   }
 }

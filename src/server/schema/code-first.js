@@ -27,7 +27,7 @@ export const codeFirstSchema = new GraphQLSchema({
       // Ендпоинты для запроса query={hello}
       hello: {
         type: GraphQLString,
-        resolve: function() {
+        resolve: function () {
           // указывает действие, которое должно быть выполнено при достижении ендпоинта
           return 'Hello World'
         }
@@ -49,8 +49,8 @@ export const codeFirstSchema = new GraphQLSchema({
           id: { type: GraphQLInt }
         },
 
-        resolve: function(parent, args, context) {
-          return movies.find(item => item.id === args.id)
+        resolve: function (parent, args, context) {
+          return movies.find((item) => item.id === args.id)
         }
       },
       //ендпоинт
@@ -83,8 +83,8 @@ export const codeFirstSchema = new GraphQLSchema({
                 id: { type: GraphQLInt }
               },
 
-              resolve: function(parent, args, context) {
-                return movies.filter(item => item.directorId === parent.id)
+              resolve: function (parent, args, context) {
+                return movies.filter((item) => item.directorId === parent.id)
               }
             }
           })
@@ -93,8 +93,8 @@ export const codeFirstSchema = new GraphQLSchema({
           id: { type: GraphQLInt }
         },
 
-        resolve: function(parent, args, context) {
-          return directors.find(item => item.id === args.id)
+        resolve: function (parent, args, context) {
+          return directors.find((item) => item.id === args.id)
         }
       }
     })

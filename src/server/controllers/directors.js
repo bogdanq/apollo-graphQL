@@ -1,6 +1,6 @@
 const { DirectorsModel } = require('../models/directors')
 
-const getDirectorById = async id => {
+const getDirectorById = async (id) => {
   try {
     return await DirectorsModel.findOne({
       directorId: id
