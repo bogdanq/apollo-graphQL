@@ -24,7 +24,7 @@ proxy: {
 В `webpack.config.js` - добавить обработку gql в лоадеры
 Установить `graphql-tag/loader` и добавить в плагины
 
-```js
+```javascript
 const plugins = [
   new HappyPack({
     id: 'gql',
