@@ -9,7 +9,7 @@
 Добавить расширения в `moduleFileExtensions` ( "gql", "graphql")
 В `webpackDevServer.config.js` добавить обьект в `proxy`, где `target` - ссылка на GraphQl API
 
-```js
+```javascript
 proxy: {
   ...proxy,
   '/graphql': {
